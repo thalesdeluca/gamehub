@@ -72,7 +72,7 @@ const auth = (state = INIT_STATE, action) => {
 }
 
 const login = ({ email, password }) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     try {
       const { data } = await api.post("/login", { email, password })
       if (data) {

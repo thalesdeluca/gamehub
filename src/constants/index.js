@@ -1,10 +1,10 @@
 import jokenpoIcon from "../assets/images/jokenpo-icon.jpg"
 
-const games = [
-  { name: "Jokenpo", icon: jokenpoIcon, to: "/jokenpo" },
-  { name: "Hangman", icon: null, to: "/hang" },
-  { name: "Tic-Tac-Toe", icon: null, to: "/jokenpo" }
-]
+const games = {
+  jokenpo: { name: "Jokenpo", icon: jokenpoIcon, to: "/jokenpo" },
+  hangman: { name: "Hangman", icon: null, to: "/hang" },
+  tictactoe: { name: "Tic-Tac-Toe", icon: null, to: "/titctactoe" }
+}
 
 
 export { games }

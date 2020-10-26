@@ -1,3 +1,12 @@
+.title-site {
+  padding-top: 1em;
+  font-weight: 500;
+  font-size: 4.5rem;
+  color: white;
+  
+  letter-spacing: -5px;
+}
+
 #home {
   display: flex;
   flex: 1;
@@ -9,14 +18,7 @@
   flex-direction: column;
 
 
-  .title {
-    padding-top: 1em;
-    font-weight: 300;
-    font-size: 4.5rem;
-    color: white;
-    
-    letter-spacing: 2px;
-  }
+  
   
   .game-list {
     display: flex;

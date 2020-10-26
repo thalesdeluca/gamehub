@@ -1,0 +1,56 @@
+#header {
+
+    border-radius: 12px;
+    border: 2px solid #ffffff38;
+    height: fit-content;
+    padding: 14px; 
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+  
+  .title-container {
+    display: flex;
+    flex:1;
+    justify-content: center;
+    flex-direction: column;
+    margin-left: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .title {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    color: whitesmoke;
+    font-size: 1.8rem;
+   
+  }
+  
+  .score-container {
+    height: 100%;
+    background: whitesmoke;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 36px;
+  }
+  
+  .score-header {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 500;
+    letter-spacing: 1px;
+    align-self: center;
+    color: hsl(229, 64%, 46%);
+    font-size: 0.7em;
+  }
+  
+  .score {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+    align-self: center;
+    color: hsl(229, 25%, 31%);
+    font-size: 2.5em;
+    line-height: 2.5rem;
+  }
+}

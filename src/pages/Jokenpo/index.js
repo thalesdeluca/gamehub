@@ -1,97 +1,164 @@
-import React from 'react'
+import React, { useState } from 'react'
 import triangleImg from "../../assets/images/bg-triangle.svg"
 import iconPaperImg from "../../assets/images/icon-paper.svg"
 import iconScissorsImg from "../../assets/images/icon-scissors.svg"
 import iconRockImg from "../../assets/images/icon-rock.svg"
 import "./styles.scss"
+import { Header, JokenpoButton } from '../../components'
+import { useDispatch, useSelector } from 'react-redux'
+import { CSSTransitionGroup } from "react-transition-group";
+import { useHistory } from 'react-router-dom'
+import { saveScore, saveScoreTemp } from '../../store/ducks/game'
+import { games } from '../../constants'
+
+const options = ["rock", "paper", "scissors"]
+
+
+const conditions = {
+  paper_rock: true,
+  paper_scissors: false,
+  paper_paper: null,
+  scissors_paper: true,
+  scissors_rock: false,
+  scissors_scissors: null,
+  rock_paper: false,
+  rock_scissors: true,
+  rock_rock: null,
+}
 
 function JokenpoPage() {
+  const { user } = useSelector(state => state.auth)
+  const [score, setScore] = useState(0);
+  const [played, setPlayed] = useState(false)
+  const [choice, setChoice] = useState(null)
+  const [cpuChoice, setCpuChoice] = useState(null);
+  const [win, setWin] = useState(undefined);
+
+  const history = useHistory();
+  const dispatch = useDispatch();
+
+  const onClick = (option = "") => {
+    if (!played) {
+      const cpu = options[Math.floor(Math.random() * 3)]
+      const checkWin = conditions[`${option}_${cpu}`];
+      setWin(checkWin)
+      setCpuChoice(cpu)
+      setChoice(option)
+      setPlayed(true);
+
+      if (checkWin) {
+        setScore(score + 1)
+      }
+    }
+  }
+
+  const renderChoice = (choice) => {
+    const classes = [
+      { icon: iconRockImg, name: "red" },
+      { icon: iconPaperImg, name: "blue" },
+      { icon: iconScissorsImg, name: "yellow" }
+    ]
+
+    const choiceIndex = options.findIndex((name) => name === choice);
+
+    return (
+      <JokenpoButton icon={classes[choiceIndex]?.icon} className={`action-btn ${classes[choiceIndex]?.name} result`} />
+    )
+  }
+
+  const renderResult = () => {
+    return played && (
+      <div id="results" className="results-container">
+        <div className="picked" id="picked">
+          <span className="result-title">YOU PICKED</span>
+          {renderChoice(choice)}
+        </div>
+
+        <div className="cpu" id="cpu">
+          <span className="result-title">THE HOUSE PICKED</span>
+          {renderChoice(cpuChoice)}
+        </div>
+      </div>
+    )
+  }
+
+  const renderResultTitle = () => {
+    switch (win) {
+      case true:
+        return "YOU WIN"
+      case false:
+        return "YOU LOST"
+      case null:
+        return "TIE"
+
+      default:
+        return ""
+    }
+  }
+
+
+  const onClickAgain = () => {
+    setPlayed(false);
+    setChoice(null)
+    setCpuChoice(null)
+    setWin(undefined)
+  }
+
+  const onClickSave = () => {
+    if (user) {
+      dispatch(saveScore(score, "jokenpo"))
+    }
+
+    dispatch(saveScoreTemp(score, "jokenpo"));
+    history.push("/login")
+
+  }
+
+  const renderButtons = () => (
+    <>
+      <button type="button" className="btn btn-info btn-lg rules scorebtn" onClick={onClickSave}>
+        SAVE SCORE
+      </button>
+
+      <button type="button" id="again" className="btn btn-info btn-lg rules again" onClick={onClickAgain}>
+        PLAY AGAIN
+      </button>
+      <span id="results-title">{renderResultTitle()}</span>
+    </>
+  )
+
   return (
     <div className="jokenpo-container">
+
+
+      <span className="title-site" >GameHUB</span>
+
       <div className="container">
-        <div className="header">
-          <div className="title-container">
-            <span className="title">ROCK</span>
-            <span className="title">PAPER</span>
-            <span className="title">SCISSORS</span>
-          </div>
+        <Header score={score} titles={["ROCK", "PAPER", "SCISSORS"]} />
 
-          <div className="score-container">
-            <span className="score-header">SCORE</span>
-            <span id="score" className="score">0</span>
-          </div>
-        </div>
-
-        <div id="buttons" className="buttons-container">
-          <img src={triangleImg} className="center-triangle" />
-          <div className="top-buttons">
-            <button id="paper">
-              <div className="action-btn blue">
-                <img src={iconPaperImg} />
+        <CSSTransitionGroup
+          transitionName="fade"
+          transitionLeave={false}
+          transitionEnterTimeout={400}
+          transitionLeaveTimeout={200}
+        >
+          {!played ? (
+            <div id="buttons" className="buttons-container" key="button">
+              <img src={triangleImg} className="center-triangle" />
+              <div className="top-buttons">
+                <JokenpoButton onClick={() => onClick("paper")} id="paper" icon={iconPaperImg} className="action-btn blue" />
+                <JokenpoButton onClick={() => onClick("scissors")} id="scissors" icon={iconScissorsImg} className="action-btn yellow" />
               </div>
-            </button>
-            <button id="scissors">
-              <div className="action-btn yellow">
-                <img src={iconScissorsImg} />
-              </div>
-            </button>
-          </div>
-
-          <button id="rock">
-            <div className="action-btn red">
-              <img src={iconRockImg} />
+              <JokenpoButton onClick={() => onClick("rock")} id="rock" icon={iconRockImg} className="action-btn red" />
             </div>
-          </button>
-        </div>
+          ) : (
+              <>
+                {renderResult()}
+                {renderButtons()}
+              </>
+            )}
 
-
-        <div id="results" className="results-container">
-          <div className="picked" id="picked">
-            <span className="result-title">YOU PICKED</span>
-
-          </div>
-
-          <div className="cpu" id="cpu">
-            <span className="result-title">THE HOUSE PICKED</span>
-
-          </div>
-        </div>
-
-        <button type="button" className="btn btn-info btn-lg rules leaderboards" data-toggle="modal" data-target="#leaderboards"
-          id="leaderboards-btn">
-          <img src="./assets/images/rank.svg" className="rank-icon" />
-        </button>
-
-        <button type="button" className="btn btn-info btn-lg rules scorebtn" data-toggle="modal" data-target="#saveScore">
-          SAVE SCORE
-    </button>
-
-        <button type="button" id="again" className="btn btn-info btn-lg rules again none">
-          PLAY AGAIN
-    </button>
-        <span id="results-title"></span>
-
-      </div>
-
-
-
-      <button type="button" class="btn btn-info btn-lg rules" data-toggle="modal" data-target="#ruleModal">RULES</button>
-
-      <div class="modal fade" id="ruleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Rules</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <img src="./assets/images/image-rules.svg" class="d-block mx-auto" />
-            </div>
-          </div>
-        </div>
+        </CSSTransitionGroup>
       </div>
     </div>
   )
