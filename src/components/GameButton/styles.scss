@@ -1,6 +1,7 @@
 .game-card {
   flex: 1 1 0px;
   flex-basis: 100%;
+  max-width: 300px;
   white-space: nowrap;
   cursor: pointer;
   display: flex;

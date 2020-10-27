@@ -9,6 +9,8 @@ const Types = {
   AUTH_SIGNUP_USER_SUCCESS: "AUTH/SIGNUP_USER_SUCESS",
   AUTH_SIGNUP_USER_FAILED: "AUTH/SIGNUP_USER_FAILED",
 
+
+  AUTH_LOGOUT_USER: "AUTH/LOGOUT_USER",
 }
 
 const INIT_STATE = {
@@ -65,6 +67,12 @@ const auth = (state = INIT_STATE, action) => {
         signupError: action.payload
       }
 
+    case Types.AUTH_LOGOUT_USER:
+      return {
+        ...state,
+        user: null
+      }
+
 
     default:
       return state;
@@ -74,6 +82,7 @@ const auth = (state = INIT_STATE, action) => {
 const login = ({ email, password }) => {
   return async (dispatch, getState) => {
     try {
+      dispatch({ type: Types.AUTH_LOGIN_USER });
       const { data } = await api.post("/login", { email, password })
       if (data) {
         localStorage.setItem("@gamehub-token", String(data?.token))
@@ -87,13 +96,16 @@ const login = ({ email, password }) => {
 }
 
 const logout = () => {
-  localStorage.removeItem("@gamehub-token")
+  return (dispatch) => {
+    dispatch({ type: Types.AUTH_LOGOUT_USER })
+    localStorage.removeItem("@gamehub-token")
+  }
 }
-
 
 const signup = (body) => {
   return async (dispatch) => {
     try {
+      dispatch({ type: Types.AUTH_SIGNUP_USER });
       const { data } = await api.post("/signup", body)
       if (data) {
         localStorage.setItem("@gamehub-token", String(data?.token))
@@ -105,9 +117,6 @@ const signup = (body) => {
     }
   }
 }
-
-
-
 
 export {
   login,

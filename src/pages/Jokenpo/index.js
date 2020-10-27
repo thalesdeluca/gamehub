@@ -4,10 +4,10 @@ import iconPaperImg from "../../assets/images/icon-paper.svg"
 import iconScissorsImg from "../../assets/images/icon-scissors.svg"
 import iconRockImg from "../../assets/images/icon-rock.svg"
 import "./styles.scss"
-import { Header, JokenpoButton } from '../../components'
+import { Button, Header, JokenpoButton, Spinner } from '../../components'
 import { useDispatch, useSelector } from 'react-redux'
 import { CSSTransitionGroup } from "react-transition-group";
-import { useHistory } from 'react-router-dom'
+import { useHistory, Link } from 'react-router-dom'
 import { saveScore, saveScoreTemp } from '../../store/ducks/game'
 import { games } from '../../constants'
 
@@ -28,6 +28,7 @@ const conditions = {
 
 function JokenpoPage() {
   const { user } = useSelector(state => state.auth)
+  const { scoreLoading } = useSelector(state => state.game)
   const [score, setScore] = useState(0);
   const [played, setPlayed] = useState(false)
   const [choice, setChoice] = useState(null)
@@ -106,7 +107,7 @@ function JokenpoPage() {
 
   const onClickSave = () => {
     if (user) {
-      dispatch(saveScore(score, "jokenpo"))
+      return dispatch(saveScore(score, "jokenpo"))
     }
 
     dispatch(saveScoreTemp(score, "jokenpo"));
@@ -116,10 +117,13 @@ function JokenpoPage() {
 
   const renderButtons = () => (
     <>
-      <button type="button" className="btn btn-info btn-lg rules scorebtn" onClick={onClickSave}>
-        SAVE SCORE
-      </button>
-
+      {scoreLoading ? (
+        <Spinner />
+      ) : (
+          <button type="button" className="btn btn-info btn-lg rules scorebtn" onClick={onClickSave}>
+            SAVE SCORE
+          </button>
+        )}
       <button type="button" id="again" className="btn btn-info btn-lg rules again" onClick={onClickAgain}>
         PLAY AGAIN
       </button>
@@ -129,9 +133,9 @@ function JokenpoPage() {
 
   return (
     <div className="jokenpo-container">
-
-
-      <span className="title-site" >GameHUB</span>
+      <Link to="/" style={{ textDecoration: 'none' }}>
+        <span className="title-site" >GameHUB</span>
+      </Link>
 
       <div className="container">
         <Header score={score} titles={["ROCK", "PAPER", "SCISSORS"]} />

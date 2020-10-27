@@ -12,7 +12,7 @@ const INIT_STATE = {
   score: 0,
   scoreLoading: false,
   scoreError: null,
-
+  leaderboards: [],
   game: ""
 }
 
@@ -30,16 +30,19 @@ const game = (state = INIT_STATE, action) => {
     case Types.GAME_SAVE_SCORE_SUCCESS:
       return {
         ...state,
+        leaderboards: action.payload,
+        game: "",
         score: 0,
-        scoreLoading: true,
+        scoreLoading: false,
         scoreError: null
       }
 
     case Types.GAME_SAVE_SCORE_FAILED:
       return {
         ...state,
+        game: "",
         score: action.payload,
-        scoreLoading: true,
+        scoreLoading: false,
         scoreError: null
       }
 
@@ -58,6 +61,7 @@ const game = (state = INIT_STATE, action) => {
 const saveScore = (score = 0, game = "") => {
   return async (dispatch) => {
     try {
+      dispatch({ type: Types.GAME_SAVE_SCORE })
       const { data } = await api.post("/score", { score, game });
       dispatch({ type: Types.GAME_SAVE_SCORE_SUCCESS, payload: data })
     } catch (err) {

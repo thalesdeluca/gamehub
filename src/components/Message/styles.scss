@@ -1,0 +1,32 @@
+.message-container {
+  display: flex;
+  background: white;
+  flex-direction: column;
+  margin: 10px 15px;
+  width: fit-content;
+  padding: 10px;
+  border-radius: 6px;
+
+  .title {
+    align-self: flex-start;
+    color: #040e47;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .text {
+    font-weight: 500;
+    color: #212121;
+    font-size: 12px;
+  }
+  .date {
+    align-self: flex-end;
+    font-size: 10px;
+    font-weight: 300;
+    color: #454545
+  }
+}
+
+.you {
+  margin-left: auto;
+  
+}
