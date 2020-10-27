@@ -1,4 +1,4 @@
-import api from "../../config/api"
+import api from "../../config/api";
 
 const Types = {
   AUTH_LOGIN_USER: "AUTH/LOGIN_USER",
@@ -9,17 +9,16 @@ const Types = {
   AUTH_SIGNUP_USER_SUCCESS: "AUTH/SIGNUP_USER_SUCESS",
   AUTH_SIGNUP_USER_FAILED: "AUTH/SIGNUP_USER_FAILED",
 
-
   AUTH_LOGOUT_USER: "AUTH/LOGOUT_USER",
-}
+};
 
 const INIT_STATE = {
   user: null,
   userLoading: false,
   userError: null,
 
-  signupError: null
-}
+  signupError: null,
+};
 
 const auth = (state = INIT_STATE, action) => {
   switch (action.type) {
@@ -28,100 +27,112 @@ const auth = (state = INIT_STATE, action) => {
         ...state,
         user: null,
         userLoading: true,
-        userError: null
-      }
+        userError: null,
+      };
 
     case Types.AUTH_LOGIN_USER_SUCCESS:
       return {
         ...state,
         user: action.payload,
         userLoading: false,
-      }
+      };
 
     case Types.AUTH_LOGIN_USER_FAILED:
       return {
         ...state,
         userLoading: false,
-        userError: action.payload
-      }
+        userError: action.payload,
+      };
 
     case Types.AUTH_SIGNUP_USER:
       return {
         ...state,
         user: null,
         userLoading: true,
-        signupError: null
-      }
+        signupError: null,
+      };
 
     case Types.AUTH_SIGNUP_USER_SUCCESS:
       return {
         ...state,
         user: action.payload,
         userLoading: false,
-      }
+      };
 
     case Types.AUTH_SIGNUP_USER_FAILED:
       return {
         ...state,
         userLoading: false,
-        signupError: action.payload
-      }
+        signupError: action.payload,
+      };
 
     case Types.AUTH_LOGOUT_USER:
       return {
         ...state,
-        user: null
-      }
-
+        user: null,
+      };
 
     default:
       return state;
   }
-}
+};
 
 const login = ({ email, password }) => {
   return async (dispatch, getState) => {
     try {
       dispatch({ type: Types.AUTH_LOGIN_USER });
-      const { data } = await api.post("/login", { email, password })
+      const { data } = await api.post("/login", { email, password });
       if (data) {
-        localStorage.setItem("@gamehub-token", String(data?.token))
-        dispatch({ type: Types.AUTH_LOGIN_USER_SUCCESS, payload: data })
+        console.log(data);
+        localStorage.setItem("@gamehub-token", String(data?.token));
+        localStorage.setItem("@gamehub-data", JSON.stringify(data));
+        const result = { token: data?.token, ...data?.user };
+        dispatch({ type: Types.AUTH_LOGIN_USER_SUCCESS, payload: result });
       }
-
     } catch (err) {
-      dispatch({ type: Types.AUTH_LOGIN_USER_FAILED, payload: err })
+      dispatch({ type: Types.AUTH_LOGIN_USER_FAILED, payload: err });
     }
-  }
-}
+  };
+};
+
+const loginRefresh = () => {
+  return (dispatch) => {
+    try {
+      const local = JSON.parse(localStorage.getItem("@gamehub-data"));
+      if (local) {
+        const result = { token: local?.token, ...local?.user };
+        dispatch({ type: Types.AUTH_LOGIN_USER_SUCCESS, payload: result });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
 
 const logout = () => {
   return (dispatch) => {
-    dispatch({ type: Types.AUTH_LOGOUT_USER })
-    localStorage.removeItem("@gamehub-token")
-  }
-}
+    dispatch({ type: Types.AUTH_LOGOUT_USER });
+    localStorage.removeItem("@gamehub-token");
+    localStorage.removeItem("@gamehub-data");
+  };
+};
 
 const signup = (body) => {
   return async (dispatch) => {
     try {
       dispatch({ type: Types.AUTH_SIGNUP_USER });
-      const { data } = await api.post("/signup", body)
+      const { data } = await api.post("/signup", body);
       if (data) {
-        localStorage.setItem("@gamehub-token", String(data?.token))
-        dispatch({ type: Types.AUTH_SIGNUP_USER_SUCCESS, payload: data })
+        localStorage.setItem("@gamehub-token", String(data?.token));
+        localStorage.setItem("@gamehub-data", JSON.stringify(data));
+        dispatch({ type: Types.AUTH_SIGNUP_USER_SUCCESS, payload: data });
       }
-
     } catch (err) {
-      dispatch({ type: Types.AUTH_SIGNUP_USER_FAILED, payload: err })
+      dispatch({ type: Types.AUTH_SIGNUP_USER_FAILED, payload: err });
     }
-  }
-}
+  };
+};
 
-export {
-  login,
-  logout,
-  signup
-}
+export { login, logout, signup, loginRefresh };
 
 export default auth;

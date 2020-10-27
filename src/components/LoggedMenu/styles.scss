@@ -1,7 +1,8 @@
-.menu-container { 
+.menu-container {
   position: absolute;
   top: 25px;
   right: 25px;
+  z-index: 20;
 }
 
 .icon-menu {
@@ -9,6 +10,7 @@
   width: 32px;
   cursor: pointer;
   transition: all ease 0.2s;
+  z-index: 20;
 
   &:hover {
     opacity: 0.2;

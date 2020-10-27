@@ -1,22 +1,18 @@
-import React from 'react'
-import moment from "moment";
-import "./styles.scss"
+import React from "react";
+import "./styles.scss";
 
 const Message = ({ you = false, data: { text, created_at, user } }) => {
-
   return !you ? (
     <div className="message-container">
       <span className="title">{user?.name}</span>
       <span className="text">{text}</span>
-
     </div>
   ) : (
-      <div className="message-container you">
-        <span className="title you">{user?.name}</span>
-        <span className="text you">{text}</span>
+    <div className="message-container you">
+      <span className="title you">{user?.name}</span>
+      <span className="text you">{text}</span>
+    </div>
+  );
+};
 
-      </div>
-    )
-}
-
-export default Message
+export default Message;
